@@ -1,4 +1,4 @@
-### MusicApp
+## MusicApp
 ## MusicApp; kullanıcıların müzik dinlemesini, yeni müzikleri keşfetmesini ve çevresindeki kullanıcılarla etkileşim kurarak dinleme alışkanlıklarına göre çalma listeleri oluşturmasını sağlayan yenilikçi bir mobil uygulamadır.
 
 ---
@@ -20,3 +20,5 @@ Keşfet Butonu: Uygulamada yer alan keşfet butonu, kullanıcıların yeni müzi
 **Dinleme Alışkanlıklarına Dayalı Öneriler**: Kullanıcının zaman içindeki müzik dinleme alışkanlıkları analiz edilerek daha kişiselleştirilmiş öneriler sunulacak.
 **Çevresel Veriler ile Dinamik Listeler**: Bluetooth üzerinden diğer kullanıcıların dinledikleri müzikler daha fazla analiz edilerek çalma listeleri optimize edilecek.
 Trend Çalma Listeleri: Farklı bölge veya yaş gruplarındaki kullanıcıların dinleme tercihleri analiz edilerek popüler müzikler listelenecek.
+
+---
