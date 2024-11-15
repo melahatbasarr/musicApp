@@ -29,4 +29,4 @@ Trend Çalma Listeleri: Farklı bölge veya yaş gruplarındaki kullanıcıları
 
 ---
 
-1. [Proje Planı](MD/proje_plani.md)
+1. [Proje Planı](MD/proje_plani)
