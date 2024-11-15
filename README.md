@@ -23,6 +23,10 @@ Trend Çalma Listeleri: Farklı bölge veya yaş gruplarındaki kullanıcıları
 
 ---
 
-####Figma Tasarımı
+#Figma Tasarımı
 
 [figma](https://www.figma.com/proto/oB6UYkCjHondJuaKHHTjPS/Untitled?node-id=0-1&t=UZVorYvBHerWn9fO-1)
+
+---
+
+1. [Proje Planı](MD/ProjePlani.md)
