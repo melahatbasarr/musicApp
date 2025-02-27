@@ -1,34 +1,30 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:music_app/core/resources/data_state.dart';
 import 'package:music_app/services/http_service.dart';
 
-import '../../../../core/resources/data_state.dart';
-
-abstract class RegisterRepository {
-  Future<DataState<bool>> registerUser(
-      {required String email, required String password});
+abstract class UsernameRepository {
+  Future<DataState<bool>> checkUsername({required String username});
 }
 
-final class RegisterRepositoryImpl extends RegisterRepository {
+final class UserNameRepositoryImpl extends UsernameRepository {
   final HttpService _service = HttpService();
 
   @override
-  Future<DataState<bool>> registerUser(
-      {required String email, required String password}) async {
+  Future<DataState<bool>> checkUsername({required String username}) async {
     try {
       final data = {
-        "email": email,
-        "password": password,
+        "username": username,
       };
 
-      final res = await _service.postData(data: data, apiUrl: "/register");
+      final res =
+          await _service.postData(data: data, apiUrl: "/check-username");
       final body = json.decode(res.body);
 
       if (body["success"] == "true") {
         return const DataSuccess(true);
       }
-
       return DataFailed(FlutterError(body["message"]));
     } catch (error) {
       return DataFailed(FlutterError("error"));

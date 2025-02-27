@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:music_app/features/auth/username/controller/username_controller.dart';
+import 'package:music_app/features/auth/username/repository/username_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:music_app/features/auth/login/controller/login_controller.dart';
 import 'package:music_app/features/auth/login/repository/login_repository.dart';
@@ -12,11 +14,14 @@ void main() {
   // GetX bağımlılıkları başlatılıyor
   final loginRepository = LoginRepositoryImpl();
   final registerRepository = RegisterRepositoryImpl();
+  final usernameRepository = UserNameRepositoryImpl();
 
   Get.lazyPut<LoginController>(
       () => LoginController(loginRepository: loginRepository));
   Get.lazyPut<RegisterController>(
       () => RegisterController(registerRepository: registerRepository));
+  Get.lazyPut<UsernameController>(
+      () => UsernameController(usernameRepository: usernameRepository));
 
   // Uygulamayı başlatma
   runApp(

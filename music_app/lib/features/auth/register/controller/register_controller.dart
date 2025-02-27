@@ -12,40 +12,28 @@ final class RegisterController extends GetxController {
   RegisterController({required this.registerRepository});
 
   void registerUser({
-    required String firstName,
-    required String lastName,
     required String email,
     required String password,
     required VoidCallback onSuccess,
-    required VoidCallback onFailure, 
+    required VoidCallback onFailure,
   }) {
     isLoading.value = true;
 
     Future.delayed(const Duration(seconds: 1), () async {
       isLoading.value = false;
 
-      if (firstName.isNotEmpty &&
-          lastName.isNotEmpty &&
-          email.isNotEmpty &&
-          password.isNotEmpty) {
+      if (email.isNotEmpty && password.isNotEmpty) {
+        final result = await registerRepository.registerUser(
+            email: email, password: password);
 
-    
-            final result = await registerRepository.registerUser(email: email, password: password, firstName: firstName, lastName: lastName);
-
-            if (result is DataSuccess<bool> == true) {
-              
-              onSuccess();
-       
-            } else if(result.error != null){
-              CustomWidgets.showSnackBar(message: result.error!.message);
-
-              }
-            
-            } else {
-
-                CustomWidgets.showSnackBar(message: "Boş bırakma.");
-
-            }
+        if (result is DataSuccess<bool> == true) {
+          onSuccess();
+        } else if (result.error != null) {
+          CustomWidgets.showSnackBar(message: result.error!.message);
+        }
+      } else {
+        CustomWidgets.showSnackBar(message: "Boş bırakma.");
+      }
     });
   }
 }
