@@ -11,6 +11,8 @@ import 'package:music_app/config/theme/custom_colors.dart';
 import 'package:music_app/features/auth/login/controller/login_controller.dart';
 import 'package:music_app/features/auth/register/screens/register_page.dart';
 import 'package:music_app/features/navigator/screens/navigator_page.dart';
+import 'package:music_app/services/auth_service.dart';
+import 'package:music_app/features/auth/forgot_password/screens/forgot_password_page.dart';
 
 final class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,9 +22,23 @@ final class LoginPage extends StatefulWidget {
 }
 
 final class _LoginPageState extends State<LoginPage> {
-  final LoginController _controller = Get.find<LoginController>();
+  late final LoginController _controller;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  
+  @override
+  void initState() {
+    super.initState();
+    try {
+      _controller = Get.find<LoginController>();
+      _controller.emailController = _emailController;
+      _controller.passwordController = _passwordController;
+    } catch (e) {
+      print("Login controller error: $e");
+      // Eğer controller bulunamazsa, main.dart'ta genellikle zaten init edilmiştir
+      // Ama yine de hata durumunda uygulamanın çökmemesi için önlem alıyoruz
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +53,9 @@ final class _LoginPageState extends State<LoginPage> {
               Center(child: CustomWidgets.pageTitle("Sign In")),
               const SizedBox(height: 40),
               DefaultTextField(
-                title: "Email Adress",
+                title: "Username",
                 controller: _emailController,
-                iconData: Icons.email_outlined,
+                iconData: Icons.person_outline,
               ),
               const SizedBox(height: 15),
               PasswordTextField(
@@ -48,15 +64,17 @@ final class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 15),
               _buildForgotPasswordText(),
-              const SizedBox(height: 15),
+              const SizedBox(height: 20),
               OrangeButton(
                 title: "Sign In",
                 onTap: () => _checkFields(),
               ),
               const SizedBox(height: 15),
               _buildRegisterText(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 15),
               _buildSocialLoginButton(),
+              const SizedBox(height: 15),
+              _buildContinueWithoutLoginButton(),
             ],
           ),
         ),
@@ -73,7 +91,7 @@ final class _LoginPageState extends State<LoginPage> {
           padding: EdgeInsets.zero,
           onPressed: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const NavigatorPage()),
+            MaterialPageRoute(builder: (context) => const ForgotPasswordPage()),
           ),
           child: CustomWidgets.title("Forgot Password",color:CustomColors.whiteText,underline: true),
         ),
@@ -99,10 +117,18 @@ final class _LoginPageState extends State<LoginPage> {
                 color: CustomColors.whiteText,
               ),
               recognizer: TapGestureRecognizer()
-                ..onTap = () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const RegisterPage())),
+                ..onTap = () {
+                  try {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const RegisterPage()),
+                      (route) => false
+                    );
+                  } catch (e) {
+                    print("Navigation error: $e");
+                    Get.offAll(() => const RegisterPage());
+                  }
+                },
             ),
           ],
         ),
@@ -112,12 +138,14 @@ final class _LoginPageState extends State<LoginPage> {
 
   _checkFields() {
     if (_emailController.text.isEmpty) {
-      CustomWidgets.showSnackBar(message: "Enter your e-mail address");
+      CustomWidgets.showSnackBar(message: "Enter your username");
     } else if (_passwordController.text.isEmpty) {
       CustomWidgets.showSnackBar(message: "Enter your password");
     } else {
       _controller.loginUser(
-          email: _emailController.text, password: _passwordController.text);
+        email: _emailController.text, 
+        password: _passwordController.text
+      );
     }
   }
 
@@ -149,6 +177,54 @@ final class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContinueWithoutLoginButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          foregroundColor: CustomColors.whiteText,
+        ),
+        onPressed: () async {
+          try {
+            // Önce AuthService'i oluştur
+            final authService = AuthService();
+            
+            // Kullanıcıyı misafir olarak ayarla
+            await authService.setGuestUser(true);
+            await authService.setLoggedIn(false);
+            
+            if (!mounted) return;
+            
+            // Direkt olarak Bluetooth sayfasına git
+            Get.offAll(() => const NavigatorPage(initialIndex: 1));
+          } catch (e) {
+            print("Guest login error: $e");
+            
+            if (!mounted) return;
+            
+            // Hata mesajı göster
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("An error occurred. Please try again."))
+            );
+          }
+        },
+        child: const Padding(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          child: Text(
+            "Continue without login",
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: "Poppins Regular",
+              decoration: TextDecoration.underline,
+            ),
+          ),
         ),
       ),
     );

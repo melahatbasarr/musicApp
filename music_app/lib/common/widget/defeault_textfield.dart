@@ -4,12 +4,17 @@ final class DefaultTextField extends StatelessWidget {
   final TextEditingController controller;
   final String title;
   final IconData? iconData;
+  final TextInputType? keyboardType;
+  final int? maxLength;
 
-  const DefaultTextField(
-      {super.key,
+  const DefaultTextField({
+      super.key,
       required this.title,
       required this.controller,
-      this.iconData});
+      this.iconData,
+      this.keyboardType,
+      this.maxLength,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +35,8 @@ final class DefaultTextField extends StatelessWidget {
           style: const TextStyle(
             color: Colors.black,
           ),
+          keyboardType: keyboardType,
+          maxLength: maxLength,
           decoration: InputDecoration(
             isDense: true,
             hintText: "Enter $title",

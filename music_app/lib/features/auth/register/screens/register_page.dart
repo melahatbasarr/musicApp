@@ -5,10 +5,10 @@ import 'package:music_app/common/widget/custom_widget.dart';
 import 'package:music_app/common/widget/defeault_textfield.dart';
 import 'package:music_app/common/widget/orange_button.dart';
 import 'package:music_app/common/widget/password_textfield.dart';
-import 'package:music_app/features/auth/login/screens/login_page.dart';
 import 'package:music_app/features/auth/register/controller/register_controller.dart';
-import 'package:music_app/features/auth/username/screens/username_page.dart';
+import 'package:music_app/features/navigator/screens/navigator_page.dart';
 import '../../../../config/theme/custom_colors.dart';
+import '../../../../features/auth/login/screens/login_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -20,7 +20,7 @@ class RegisterPage extends StatefulWidget {
 class _RegisterPageState extends State<RegisterPage> {
   final RegisterController _controller = Get.find<RegisterController>();
   
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
@@ -35,13 +35,13 @@ class _RegisterPageState extends State<RegisterPage> {
           const SizedBox(height: 30),
           
           DefaultTextField(
-              title: "Email",
-              controller: _emailController,
-              iconData: Icons.email_outlined),
+              title: "Username",
+              controller: _usernameController,
+              iconData: Icons.person_outline),
           const SizedBox(height: 12),
           PasswordTextField(title: "Password", controller: _passwordController),
           const SizedBox(height: 40),
-          OrangeButton(title: "Devam Et", onTap: () => _checkFields()),
+          OrangeButton(title: "Sign Up", onTap: () => _checkFields()),
           const SizedBox(height: 10),
           _buildLoginText(),
         ],
@@ -58,16 +58,25 @@ class _RegisterPageState extends State<RegisterPage> {
           text: 'Already have an account ? ',
           style: const TextStyle(
             color: Colors.grey,
+            fontSize: 14,
             fontFamily: "Poppins Regular",
           ),
           children: <TextSpan>[
             TextSpan(
-              text: 'Sign In',
+              text: 'Login',
               style: const TextStyle(
-                color: CustomColors.whiteText,
+                color: CustomColors.orangeText,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                fontFamily: "Poppins Medium",
               ),
               recognizer: TapGestureRecognizer()
-                ..onTap = () => Navigator.pop(context),
+                ..onTap = () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                  );
+                },
             ),
           ],
         ),
@@ -76,14 +85,14 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   _checkFields() {
-   if (_emailController.text.isEmpty) {
-      CustomWidgets.showSnackBar(message: "Please enter your email");
+    if (_usernameController.text.isEmpty) {
+      CustomWidgets.showSnackBar(message: "Please enter your username");
     } else if (_passwordController.text.isEmpty) {
       CustomWidgets.showSnackBar(message: "Please enter your password");
     } else {
       _controller.registerUser(
-       
-        email: _emailController.text,
+        username: _usernameController.text,
+        email: _usernameController.text,
         password: _passwordController.text,
         onSuccess: _onSuccess,
         onFailure: _onFailure,
@@ -93,15 +102,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // Success handler
   void _onSuccess() {
-    
+    // Doğrudan ana sayfaya yönlendir
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(
-        builder: (context) => const UsernamePage()),
+        builder: (context) => const NavigatorPage()),
       (route) => false,
     );
-
-    Get.offAll(() => const UsernamePage());
   }
 
   // Failure handler
